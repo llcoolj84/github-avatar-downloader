@@ -11,7 +11,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
   var options = {
     url: requestURL,
     headers: {
-      'User-Agent': 'moogsG' //User agent for header
+      'User-Agent': 'llcoolj84' //User agent for header
     }
   };
   console.log(requestURL);
@@ -27,22 +27,31 @@ function getRepoContributors(repoOwner, repoName, cb) {
          console.log('Downloading image...');
        })
        .on('data', function (data) {
-       console.log('Chunk Received. Length:', data.length + '\n');
+       // console.log('Chunk Received. Length:', data.length + '\n');
        string += data;
        })
        .on('end', function () {
        console.log('Download complete.');
        console.log('Response stream complete.');
-       string = JSON.parse(string);
-       return cb(string);
+       var jsondata = JSON.parse(string);
+       cb(jsondata);
        })
 
 
        //.pipe(fs.createWriteStream('./future.jpg'));
 }
 
-getRepoContributors("jquery", "jquery", function(err, result) {
-  console.log("Errors:", err);
-  console.log("Result:", result);
-});
+// getRepoContributors("jquery", "jquery", function(result) {
+//   console.log("Errors:", err);
+//   console.log("Result:", result);
+
+var getJson = function(result) {
+
+  var i = 1;
+  for (var j in result)
+  console.log(result[j].avatar_url);
+
+}
+
+getRepoContributors('jquery', 'jquery', getJson);
 
