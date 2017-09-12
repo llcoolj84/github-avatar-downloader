@@ -59,20 +59,18 @@ var getJson = function(result) {
 
 //download and write images to "avatar" folder
 function downloadImageByURL(url, filePath, fileName) {
-    request.get(url)
+    var stream = request.get(url)
         .on('error', function(err) { //message on error
             console.log(err);
         })
-
-        .on('data', function(data) { //message on data recieving
-            console.log('Downloading images... ');
+        .on('response', function(response) {
+            var extention = response.headers['content-type'].split('/')
+            stream.pipe(fs.createWriteStream(filePath + '/' + fileName + "." + extention[1]));
         })
-
-        .on('end', function() { //on message data recieved and end
-            console.log("Download complete!");
-        }).pipe(fs.createWriteStream(filePath + "/" + fileName)); // pipe data from read to write to avatar folder
-
-
+        .on('end', function() { // message on end
+            console.log('Download complete.');
+            console.log('Response stream complete.');
+        })
 }
 //call checkArguments function with input from console.
 checkArguments(repoOwner, repoName);
