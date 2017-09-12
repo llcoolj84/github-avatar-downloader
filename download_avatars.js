@@ -1,3 +1,5 @@
+// declare variables
+
 var GITHUB_USER = "llcoolj84";
 var GITHUB_TOKEN = "7a67c9ac7c1951d38001ee8c9bf8734567f28005";
 var request = require('request');
@@ -5,19 +7,20 @@ var fs = require('fs');
 var repoOwner = process.argv[2]; //takes in user input position 2
 var repoName = process.argv[3]; //takes in user input position 3
 
-function checkArguments(owner, name) { // checks for valid arguments
+// function to check for valid arguments in the command line
+function checkArguments(owner, name) {
     if (owner === undefined || name === undefined) {
         console.log("Please enter valid owner name and repository!");
     } else {
+        //welcome message
         console.log('Welcome to the GitHub Avatar Downloader!');
         getRepoContributors(repoOwner, repoName, getJson);
     }
 }
 
-
-function getRepoContributors(repoOwner, repoName, cb) { // get repo contributor url's
-
-    console.log('Welcome to the GitHub Avatar Downloader. We love Tongans!');
+// function to get repo contributor url's
+function getRepoContributors(repoOwner, repoName, cb) {
+    //declare variables
     var requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
     var string = '';
     var options = {
@@ -27,20 +30,20 @@ function getRepoContributors(repoOwner, repoName, cb) { // get repo contributor 
         }
     };
 
-
-    request.get(options) // request module , these .get, .on, .on, .on are all "chained" together
-        .on('error', function(err) {
+    // request module , these .get, .on, .on, .on are all "chained" together
+    request.get(options)
+        .on('error', function(err) { // message on error
             throw err;
         })
-        .on('response', function(response) {
+        .on('response', function(response) { // message on response
             response.setEncoding('utf8');
             console.log('Response Status Message: ', response.statusMessage);
-            console.log('Downloading image...');
+            console.log('Downloading image url\'s...');
         })
-        .on('data', function(data) {
+        .on('data', function(data) { // downloaded data sent to empty array "string"
             string += data;
         })
-        .on('end', function() {
+        .on('end', function() { // message on end , parsing of JSON string
             console.log('Download complete.');
             console.log('Response stream complete.');
             string = JSON.parse(string);
@@ -48,18 +51,14 @@ function getRepoContributors(repoOwner, repoName, cb) { // get repo contributor 
         })
 }
 
-var getJson = function(result) { // get jason key avatar and prints out
-
-
+//for each result in array, run downloadImageByURL function.
+var getJson = function(result) {
     for (var j in result)
         downloadImageByURL(result[j].avatar_url, 'avatar', result[j].login);
-
 }
 
-//getRepoContributors(repoOwner, repoName, getJson); // call get list of url's
-
-function downloadImageByURL(url, filePath, fileName) { //download and write images to "avatar" folder
-
+//download and write images to "avatar" folder
+function downloadImageByURL(url, filePath, fileName) {
     request.get(url)
         .on('error', function(err) { //message on error
             console.log(err);
@@ -75,5 +74,5 @@ function downloadImageByURL(url, filePath, fileName) { //download and write imag
 
 
 }
-
+//call checkArguments function with input from console.
 checkArguments(repoOwner, repoName);
