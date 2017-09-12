@@ -5,6 +5,15 @@ var fs = require('fs');
 var repoOwner = process.argv[2]; //takes in user input
 var repoName = process.argv[3];
 
+function checkArguments(owner, name) {
+  if (owner === undefined || name === undefined) {
+    console.log("Please enter valid an owner and name!");
+  } else {
+    console.log('Welcome to the GitHub Avatar Downloader!');
+    getRepoContributors(repoOwner, repoName, getJson);
+  }
+}
+
 
 function getRepoContributors(repoOwner, repoName, cb) {
 
@@ -17,7 +26,8 @@ function getRepoContributors(repoOwner, repoName, cb) {
       'User-Agent': 'llcoolj84' //User agent for header
     }
   };
-  console.log(requestURL);
+
+  //console.log(requestURL);
   // ...
 
        request.get(options) // these .get, .on, .on, .on are all "chained" together
@@ -55,7 +65,7 @@ var getJson = function(result) { // get jason key avatar and prints out
 
 }
 
-getRepoContributors('jquery', 'jquery', getJson); // call get list of url's
+//getRepoContributors(repoOwner, repoName, getJson); // call get list of url's
 
 
 
@@ -77,5 +87,5 @@ request.get(url)
 
 }
 
-getRepoContributors(repoOwner, repoName, getJson);
+checkArguments(repoOwner, repoName);
 
