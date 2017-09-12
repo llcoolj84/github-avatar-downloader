@@ -2,6 +2,9 @@ var GITHUB_USER = "llcoolj84";
 var GITHUB_TOKEN = "7a67c9ac7c1951d38001ee8c9bf8734567f28005";
 var request = require('request');
 var fs = require('fs');
+var repoOwner = process.argv[2]; //takes in user input
+var repoName = process.argv[3];
+
 
 function getRepoContributors(repoOwner, repoName, cb) {
 
@@ -27,14 +30,13 @@ function getRepoContributors(repoOwner, repoName, cb) {
          console.log('Downloading image...');
        })
        .on('data', function (data) {
-       // console.log('Chunk Received. Length:', data.length + '\n');
        string += data;
        })
        .on('end', function () {
        console.log('Download complete.');
        console.log('Response stream complete.');
-       var jsondata = JSON.parse(string);
-       cb(jsondata);
+       string = JSON.parse(string);
+       cb(string);
        })
 
 
@@ -45,13 +47,35 @@ function getRepoContributors(repoOwner, repoName, cb) {
 //   console.log("Errors:", err);
 //   console.log("Result:", result);
 
-var getJson = function(result) {
+var getJson = function(result) { // get jason key avatar and prints out
 
-  var i = 1;
+
   for (var j in result)
-  console.log(result[j].avatar_url);
+  downloadImageByURL(result[j].avatar_url, 'avatar', result[j].login);
 
 }
 
-getRepoContributors('jquery', 'jquery', getJson);
+getRepoContributors('jquery', 'jquery', getJson); // call get list of url's
+
+
+
+function downloadImageByURL(url, filePath, fileName) { //download and write images to "avatar" folder
+
+request.get(url)
+    .on('error', function(err) { //on error
+      console.log(err);
+    })
+
+ .on('data', function(data) { //on data recieving
+    console.log('Downloading images... ');
+  })
+
+ .on('end', function() { //on data recieve end
+    console.log("Download complete!");
+  }).pipe(fs.createWriteStream(filePath + "/" + fileName));
+
+
+}
+
+getRepoContributors(repoOwner, repoName, getJson);
 
